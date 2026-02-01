@@ -10,9 +10,9 @@ const int Motor_R_1 = 5;
 const int Motor_R_2 = 6;
 
 // --- 가변저항 값 (핸들 각도) ---
-const int center = 480;
-const int left_max = 580;
-const int right_max = 300;
+const int center = 475;      // 중앙
+const int left_max = 550;    // 왼쪽 끝
+const int right_max = 385;   // 오른쪽 끝
 
 // --- 제어 파라미터 ---
 const int deadzone = 20;
@@ -70,7 +70,6 @@ void setup() {
     pinMode(Motor_R_1, OUTPUT);
     pinMode(Motor_R_2, OUTPUT);
 
-    wait_steer_ready(center);
 
     Serial.println("감시를 시작합니다.");
     delay(1000);
@@ -151,23 +150,25 @@ void set_handle(int target) {
 void parking_start() {
     set_handle(left_max);
     move_forward(parking_speed);
-	delay(3000);
+	delay(8000);
     stop_motors();
     set_handle(right_max);
-    delay(500);
+    delay(2000);
     move_backward(parking_speed);
-    delay(1000);
+    delay(9000);
 	set_handle(center);
     move_backward(parking_speed);
-    delay(3000);
+    delay(2500);
 //---------------------------------------------
     stop_motors();
     delay(3000);
     move_forward(parking_speed);
     delay(1500);
+    stop_motors();
+    delay(1000);
     set_handle(right_max);
     move_forward(parking_speed);
-    delay(6000);
+    delay(17000);
 	set_handle(center);
     delay(50000);
 	
