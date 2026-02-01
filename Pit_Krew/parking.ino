@@ -72,7 +72,7 @@ void setup() {
 
     wait_steer_ready(center);
 
-    Serial.println("두목님, 감시를 시작합니다.");
+    Serial.println("감시를 시작합니다.");
     delay(1000);
 }
 void loop() {
