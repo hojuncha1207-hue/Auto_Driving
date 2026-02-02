@@ -17,8 +17,6 @@ const int left_max = 580;    // L (좌회전)
 const int right_max = 300;   // R (우회전)
 
 
-
-
 // --- 제어 파라미터 ---
 const int deadzone = 20;    
 const float Kp = 0.7;        
@@ -96,6 +94,9 @@ void setup() {
   pinMode(Motor_R_1, OUTPUT);
   pinMode(Motor_R_2, OUTPUT);
 }
+void strait(){
+  
+}
 void loop() {
   // 1. 파이썬 명령 수신
   if (Serial.available() > 0) {
@@ -107,9 +108,12 @@ void loop() {
     // --- [수정 핵심] ---
     // 직접 모터를 움직이지 않고, '목표 변수(target_val)'만 바꿔줍니다.
     // 이렇게 해야 루프 맨 아래에서 안정적으로 모터를 제어할 수 있습니다.
-   
+   /*const int center = 480;      // S (직진)
+  const int left_max = 580;    // L (좌회전)
+  const int right_max = 300;   // R (우회전)
+*/
     if (received_angle > 7) {
-      target_val = right_max;
+      target_val = right_max
     }
     else if (received_angle < -7) {
       // -7도보다 작으면 좌회전 고정
@@ -117,9 +121,8 @@ void loop() {
     }
     else {
       // 그 사이값(-7 ~ 7)이면 중앙 정렬
-      target_val = center;
+      target_val = center+(pow(center-received_angle)/2)
     }
-
 
     // 통신 버퍼 비우기 (밀림 방지)
     while(Serial.available() > 0) { Serial.read(); }
@@ -134,9 +137,3 @@ void loop() {
 
   delay(5);
 }
-
-
-
-
-
-
