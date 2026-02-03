@@ -14,7 +14,7 @@ class Traffic_light_Detector:
         hsv = self.hsv_conversion(img)
         if hsv is None: return None, None
 
-        # ½Ç³» È¯°æÀ» °í·ÁÇØ Ã¤µµ(S)¿Í ¸íµµ(V) ¹üÀ§¸¦ 50~255·Î ¼³Á¤
+        # ì‹¤ë‚´ í™˜ê²½ì„ ê³ ë ¤í•´ ì±„ë„(S)ì™€ ëª…ë„(V) ë²”ìœ„ë¥¼ 50~255ë¡œ ì„¤ì •
         if color_id == RED:
             mask1 = cv2.inRange(hsv, np.array([0, 50, 50]), np.array([10, 255, 255]))
             mask2 = cv2.inRange(hsv, np.array([160, 50, 50]), np.array([180, 255, 255]))
@@ -31,25 +31,28 @@ class Traffic_light_Detector:
         detected_color = "NONE"
         detected_radius = 0
         debug_mask = np.zeros(img.shape[:2], dtype=np.uint8)
+        center_y=100;
 
         for cid in [RED, GREEN]:
             mask = self.color_detection(img, cid)
             if mask is None: continue
 
-            # ¿øÇü °ËÃâ (HoughCircles)
+            # ì›í˜• ê²€ì¶œ (HoughCircles)
             circles = cv2.HoughCircles(mask, cv2.HOUGH_GRADIENT, dp=1, minDist=50,
                                        param1=100, param2=20, minRadius=10, maxRadius=200)
 
             if circles is not None:
                 circles = np.uint16(np.around(circles))
-                # °¡Àå ¸ÕÀú ¹ß°ßµÈ ¿øÀÇ Á¤º¸¸¦ °¡Á®¿È
+                # ê°€ì¥ ë¨¼ì € ë°œê²¬ëœ ì›ì˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜´
                 best_circle = circles[0, 0]
                 detected_color = COLOR_NAMES[cid]
-                detected_radius = int(best_circle[2])  # ¹İÁö¸§ ÀúÀå
+                detected_radius = int(best_circle[2])  # ë°˜ì§€ë¦„ ì €ì¥
+                center = (int(best_circle[0]), int(best_circle[1]))  # (x, y)
+                center_y=center[1]
                 debug_mask = mask
                 break
 
-            # ¿øÀÌ ¾ø¾îµµ »ö»óÀÌ °¨ÁöµÇ¸é µğ¹ö±ë¿ëÀ¸·Î ¸¶½ºÅ© ÀúÀå
+            # ì›ì´ ì—†ì–´ë„ ìƒ‰ìƒì´ ê°ì§€ë˜ë©´ ë””ë²„ê¹…ìš©ìœ¼ë¡œ ë§ˆìŠ¤í¬ ì €ì¥
             if np.any(mask > 0): debug_mask = mask
 
-        return detected_color, debug_mask, detected_radius
+        return detected_color, debug_mask, detected_radius,center_y

@@ -1,27 +1,27 @@
-##½ÅÈ£µî+Àå¾Ö¹° ÀÎ½Ä
+##ï¿½ï¿½È£ï¿½ï¿½+ï¿½ï¿½Ö¹ï¿½ ï¿½Î½ï¿½
 import cv2
 import numpy as np
 import serial
 import time
 
-# ¶óÀÌºê·¯¸® ÀÓÆ÷Æ® (ÆÄÀÏ¸íÀÌ ÀÏÄ¡ÇØ¾ß ÇÕ´Ï´Ù)
+# ï¿½ï¿½ï¿½Ìºê·¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ø¾ï¿½ ï¿½Õ´Ï´ï¿½)
 from obstacle_library import LidarObjectDetector
 from traffic_library import Traffic_light_Detector
 import AutonomousLibrary as al
 import Function_Library as fl
 
-# --- [¼³Á¤ ¹× Æ÷Æ®] ---
+# --- [ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®] ---
 ARDUINO_PORT = 'COM6'
 LIDAR_PORT = 'COM5'
 STOP_RADIUS_THRESHOLD = 30
 WIDTH, HEIGHT = 640, 480
 LANE_WIDTH_PIXELS = 450
 
-# ROI ¼³Á¤ (Â÷¼± ÀÎ½Ä ¿µ¿ª)
+# ROI ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 left_roi_pts = np.float32([[50, 480], [260, 480], [150, 315], [60, 270]])
 right_roi_pts = np.float32([[380, 480], [580, 480], [570, 270], [490, 315]])
 
-# --- [ÃÊ±âÈ­] ---
+# --- [ï¿½Ê±ï¿½È­] ---
 try:
     ser = serial.Serial(ARDUINO_PORT, 9600, timeout=0)
     time.sleep(2.0)
@@ -36,7 +36,7 @@ lane_detector = al.LaneDetector(WIDTH, HEIGHT)
 controller = al.PurePursuitController()
 env = fl.libCAMERA()
 
-# º¯¼ö ÃÊ±âÈ­
+# ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 steering_history = []
 HISTORY_LIMIT = 5
 prev_left_fit, prev_right_fit = None, None
@@ -44,33 +44,33 @@ last_send_time = 0
 send_interval = 0.05
 kernel = np.ones((5, 5), np.uint8)
 
-# Ä«¸Þ¶ó ÃÊ±â ¼³Á¤ (ch0: ½ÅÈ£µî¿ë, ch1: Â÷¼±¿ë)
+# Ä«ï¿½Þ¶ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ (ch0: ï¿½ï¿½È£ï¿½ï¿½ï¿½, ch1: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 ch0, ch1 = env.initial_setting(capnum=2)
 
 
 def main():
     global prev_left_fit, prev_right_fit, last_send_time
 
-    print("ÅëÇÕ ½Ã½ºÅÛ ½ÃÀÛ (Cam1: Â÷¼±, Cam2: ½ÅÈ£µî)")
+    print("ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Cam1: ï¿½ï¿½ï¿½ï¿½, Cam2: ï¿½ï¿½È£ï¿½ï¿½)")
 
     try:
         while True:
-            # 1. Ä«¸Þ¶ó µ¥ÀÌÅÍ ÀÐ±â
+            # 1. Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
             ret, frame_traffic, ret2, frame_lane = env.camera_read(ch0, ch1)
             if not ret or not ret2: break
 
             frame_lane = cv2.resize(frame_lane, (WIDTH, HEIGHT))
             frame_traffic = cv2.resize(frame_traffic, (WIDTH, HEIGHT))
 
-            # 2. LiDAR Àå¾Ö¹° È®ÀÎ
+            # 2. LiDAR ï¿½ï¿½Ö¹ï¿½ È®ï¿½ï¿½
             is_obstacle, _, _ = lidar.get_obstacle_status(
                 min_angle=-45, max_angle=45, max_dist=1300, min_points=10
             )
 
-            # 3. ½ÅÈ£µî ÀÎ½Ä
+            # 3. ï¿½ï¿½È£ï¿½ï¿½ ï¿½Î½ï¿½
             color, _, radius = traffic_detector.object_detection(frame_traffic)
 
-            # 4. Â÷¼± ÀÎ½Ä ÀüÃ³¸® ¹× ½½¶óÀÌµù À©µµ¿ì
+            # 4. ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             _, green_mask = lane_detector.mask_green_floor(frame_lane)
             frame_lane_masked = lane_detector.erase_right_of_green(frame_lane, green_mask)
             combined = lane_detector.get_binary_hls(frame_lane_masked)
@@ -81,34 +81,34 @@ def main():
                 refined, left_roi_pts, right_roi_pts, nwindows=60, margin=50, minpix=30
             )
 
-            # Â÷¼± º¸Á¤
+            # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             left_fit, right_fit = lane_detector.predict_lane(left_fit, right_fit, lane_width=LANE_WIDTH_PIXELS)
             if lane_detector.sanity_check(left_fit, right_fit):
                 prev_left_fit, prev_right_fit = left_fit, right_fit
             else:
                 left_fit, right_fit = prev_left_fit, prev_right_fit
 
-            # --- [Á¦¾î ·ÎÁ÷ °áÁ¤] ---
+            # --- [ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½] ---
             steering_angle = 0.0
-            speed_mode = 0  # 0: ÁÖÇà, 1: Á¤Áö
+            speed_mode = 0  # 0: ï¿½ï¿½ï¿½ï¿½, 1: ï¿½ï¿½ï¿½ï¿½
             status_msg = "DRIVING"
 
-            # ¿ì¼±¼øÀ§ 1: ½ÅÈ£µî (»¡°£ºÒ Á¤Áö)
+            # ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½ 1: ï¿½ï¿½È£ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             if color == "RED" and radius >= STOP_RADIUS_THRESHOLD:
                 speed_mode = 1
                 status_msg = "STOP (RED LIGHT)"
 
-            # ¿ì¼±¼øÀ§ 2: Àå¾Ö¹° È¸ÇÇ
+            # ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½ 2: ï¿½ï¿½Ö¹ï¿½ È¸ï¿½ï¿½
             elif is_obstacle:
                 speed_mode = 0
                 if valid_right:
-                    steering_angle = -100.0  # ¿ÞÂÊÀ¸·Î ²ª±â
+                    steering_angle = -100.0  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                     status_msg = "AVOID LEFT"
                 else:
-                    steering_angle = 100.0  # ¿À¸¥ÂÊÀ¸·Î ²ª±â
+                    steering_angle = 100.0  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                     status_msg = "AVOID RIGHT"
 
-            # ¿ì¼±¼øÀ§ 3: ÀÏ¹Ý Â÷¼± ÁÖÇà
+            # ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½ 3: ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             elif left_fit is not None and right_fit is not None:
                 raw_steer = controller.calculate_steering(left_fit, right_fit, WIDTH, HEIGHT)
                 steering_history.append(raw_steer)
@@ -116,14 +116,14 @@ def main():
                 steering_angle = sum(steering_history) / len(steering_history)
                 status_msg = "LANE KEEPING"
 
-            # 5. ¾ÆµÎÀÌ³ë Àü¼Û
+            # 5. ï¿½Æµï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
             curr_time = time.time()
             if ser and (curr_time - last_send_time > send_interval):
                 msg = f"{steering_angle:.1f},{speed_mode}\n"
                 ser.write(msg.encode())
                 last_send_time = curr_time
 
-            # 6. ¸ð´ÏÅÍ¸µ
+            # 6. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½
             cv2.putText(window_img, f"MSG: {status_msg}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             cv2.imshow("Lane View", window_img)
             cv2.imshow("Traffic View", frame_traffic)
@@ -132,8 +132,8 @@ def main():
 
     finally:
         if ser and ser.is_open:
-            print("ÇÁ·Î±×·¥ Á¾·á Áß: ¸ðÅÍ Á¤Áö ¸í·É Àü¼Û")
-            stop_msg = "0.0,1\n"  # Á¶Çâ 0, ¼Óµµ¸ðµå 1(Á¤Áö)
+            print("ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
+            stop_msg = "0.0,1\n"  # ï¿½ï¿½ï¿½ï¿½ 0, ï¿½Óµï¿½ï¿½ï¿½ï¿½ 1(ï¿½ï¿½ï¿½ï¿½)
             ser.write(stop_msg.encode())
             time.sleep(0.1)
         lidar.stop()

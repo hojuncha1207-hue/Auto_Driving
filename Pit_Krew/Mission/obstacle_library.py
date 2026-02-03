@@ -9,11 +9,11 @@ class LidarObjectDetector:
         self.scan_generator = None
 
         try:
-            # timeoutÀ» Âª°Ô ¼³Á¤ÇÏ¿© µ¥ÀÌÅÍ Áö¿¬ ½Ã ¸ÞÀÎ ·çÇÁ°¡ ¿À·¡ ´ë±âÇÏ´Â °ÍÀ» ¹æÁö
+            # timeoutï¿½ï¿½ Âªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             self.lidar = RPLidar(port, baudrate=baudrate, timeout=0.5)
             self.lidar.connect()
             self.lidar.start_motor()
-            # max_buf_meas´Â ¹öÆÛ Å©±âÀÔ´Ï´Ù.
+            # max_buf_measï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
             self.scan_generator = self.lidar.iter_scans(max_buf_meas=500)
             self.is_connected = True
             print(f"LiDAR connected on {port}")
@@ -22,36 +22,36 @@ class LidarObjectDetector:
 
     def get_obstacle_status(self, min_angle=-30, max_angle=30, max_dist=1000, min_points=10):
         """
-        Àå¾Ö¹° °¨Áö ¿©ºÎ, °¨ÁöµÈ Æ÷ÀÎÆ® °³¼ö, Æò±Õ °Å¸®¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
-        :param min_angle: °¨Áö ½ÃÀÛ °¢µµ (Á¤¸éÀÌ 0µµ, ¿ÞÂÊÀÌ À½¼ö)
-        :param max_angle: °¨Áö Á¾·á °¢µµ
-        :param max_dist: °¨Áö ÃÖ´ë °Å¸® (mm)
-        :param min_points: Àå¾Ö¹°·Î ÀÎ½ÄÇÏ±â À§ÇÑ ÃÖ¼Ò Æ÷ÀÎÆ® °³¼ö
+        ï¿½ï¿½Ö¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
+        :param min_angle: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param max_angle: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param max_dist: ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Å¸ï¿½ (mm)
+        :param min_points: ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         """
         if not self.is_connected or self.scan_generator is None:
             return False, 0, 0.0
 
         try:
-            # ÃÖ½Å ½ºÄµ µ¥ÀÌÅÍ ÇÑ ¹ÙÄûºÐ °¡Á®¿À±â (Blocking ¹ß»ý °¡´É)
+            # ï¿½Ö½ï¿½ ï¿½ï¿½Äµ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Blocking ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½)
             scan = next(self.scan_generator)
 
             obstacle_count = 0
             total_dist = 0.0
 
             for (_, angle, distance) in scan:
-                if distance <= 0: continue  # ÃøÁ¤ ¿À·ù°ª ¹«½Ã
+                if distance <= 0: continue  # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-                # °¢µµ º¸Á¤ (0~360 -> -180~180)
+                # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (0~360 -> -180~180)
                 adj_angle = angle if angle <= 180 else angle - 360
 
-                # ¼³Á¤µÈ °¢µµ ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+                # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                 if min_angle <= adj_angle <= max_angle:
-                    # ³Ê¹« °¡±î¿î ³ëÀÌÁî(15cm ¹Ì¸¸)´Â ¹«½ÃÇÏ°í max_dist ÀÌ³»¸¸ Ã¼Å©
+                    # ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(15cm ï¿½Ì¸ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ max_dist ï¿½Ì³ï¿½ï¿½ï¿½ Ã¼Å©
                     if 300 <= distance <= max_dist:
                         obstacle_count += 1
                         total_dist += distance
 
-            # °¨ÁöµÈ Æ÷ÀÎÆ®°¡ ¼³Á¤°ª ÀÌ»óÀÏ ¶§¸¸ Àå¾Ö¹°·Î ÆÇ´Ü
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½
             if obstacle_count >= min_points:
                 avg_dist = total_dist / obstacle_count
                 return True, obstacle_count, avg_dist
@@ -59,15 +59,15 @@ class LidarObjectDetector:
                 return False, obstacle_count, 0.0
 
         except StopIteration:
-            # ¶óÀÌ´Ù°¡ ¾ÆÁ÷ ÇÑ ¹ÙÄû¸¦ ´Ù ¸ø µ¹¾Æ¼­ µ¥ÀÌÅÍ°¡ ¾ø´Â °æ¿ì
+            # ï¿½ï¿½ï¿½Ì´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             return False, 0, 0.0
         except Exception as e:
-            # Åë½Å ¿¡·¯ µî ±âÅ¸ ¿¹¿Ü Ã³¸®
+            # ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
             # print(f"LiDAR Read Error: {e}")
             return False, 0, 0.0
 
     def stop(self):
-        """¶óÀÌ´Ù ¾ÈÀüÇÏ°Ô Á¾·á"""
+        """ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½"""
         if self.lidar:
             try:
                 self.lidar.stop()

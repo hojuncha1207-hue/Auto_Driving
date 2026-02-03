@@ -18,12 +18,12 @@ class LaneDetector:
   def __init__(self, width=640, height=480):
       self.width = width
       self.height = height
-      # [Ãß°¡] BEV »ó¿¡¼­ÀÇ Â÷¼± Æø (ÇÈ¼¿ ´ÜÀ§, È¯°æ¿¡ ¸ÂÃç Æ©´× ÇÊ¿ä)
+
       self.lane_width = LANE_WIDTH_PIXELS
 
 
   def mask_green_floor(self, img):
-      """ÃÊ·Ï»ö ¹Ù´Ú ¿µ¿ªÀ» °ËÀº»öÀ¸·Î ¸¶½ºÅ·"""
+      """ï¿½Ê·Ï»ï¿½ ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å·"""
 
 
       hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -31,41 +31,34 @@ class LaneDetector:
       upper_green = np.array([85, 255, 255])  # (H: 85->100)
 
 
-      # 3. ¸¶½ºÅ© »ý¼º (ÃÊ·Ï»ö ¿µ¿ª¸¸ Èò»öÀÎ ÀÌ¹ÌÁö)
+      # 3. ï¿½ï¿½ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê·Ï»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½)
       green_mask = cv2.inRange(hsv, lower_green, upper_green)
-      # green_mask »ý¼º Á÷ÈÄ¿¡ Ãß°¡
+      # green_mask ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½ß°ï¿½
       kernel = np.ones((3, 3), np.uint8)
-      # ¸¶½ºÅ© ³»ºÎÀÇ ÀÛÀº ±¸¸ÛµéÀ» ¸Þ¿ì°í °æ°è¸¦ ºÎµå·´°Ô ÇÔ
+      # ï¿½ï¿½ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ûµï¿½ï¿½ï¿½ ï¿½Þ¿ï¿½ï¿½ ï¿½ï¿½è¸¦ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½
       green_mask = cv2.morphologyEx(green_mask, cv2.MORPH_CLOSE, kernel)
-      green_mask = cv2.morphologyEx(green_mask, cv2.MORPH_DILATE, kernel)  # »ìÂ¦ ´õ ³Ð°Ô Áö¿ì±â
-      # 4. ¿øº» ÀÌ¹ÌÁö¿¡¼­ ÃÊ·Ï»ö ¿µ¿ªÀ» °ËÀº»öÀ¸·Î Ä¥ÇÏ±â
+      green_mask = cv2.morphologyEx(green_mask, cv2.MORPH_DILATE, kernel)  # ï¿½ï¿½Â¦ ï¿½ï¿½ ï¿½Ð°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+
       masked_img = img.copy()
-      # ¸¶½ºÅ©°¡ Èò»ö(255)ÀÎ À§Ä¡ÀÇ ÇÈ¼¿À» ¸ðµÎ °ËÀº»ö[0,0,0]À¸·Î º¯°æ
+
       masked_img[green_mask != 0] = [0, 0, 0]
 
 
-      return masked_img ,green_mask# µð¹ö±ëÀ» À§ÇØ ¸¶½ºÅ©µµ ¹ÝÈ¯
+      return masked_img ,green_mask
 
 
   def erase_right_of_green(self, img, green_mask):
-      """ÃÊ·Ï»ö ¸¶½ºÅ©°¡ ½ÃÀÛµÇ´Â ÁöÁ¡ºÎÅÍ ¿À¸¥ÂÊÀ» ¸ðµÎ °ËÀº»öÀ¸·Î Á¦°Å"""
+
       h, w = green_mask.shape
       result_img = img.copy()
 
-
-      # °¢ Çà(y)¿¡ ´ëÇØ ÃÊ·Ï»ö(255)ÀÌ Ã³À½ ³ªÅ¸³ª´Â À§Ä¡(x)¸¦ Ã£À½
-      # np.argmax´Â ÇØ´ç Çà¿¡¼­ °¡Àå Å« °ª(255)ÀÌ Ã³À½ ³ªÅ¸³ª´Â ÀÎµ¦½º¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
-      # ÃÊ·Ï»öÀÌ ¾ø´Â ÇàÀº 0À» ¹ÝÈ¯ÇÏ¹Ç·Î Ã¼Å©°¡ ÇÊ¿äÇÕ´Ï´Ù.
-
-
-      found_green = np.any(green_mask > 0, axis=1)  # ÃÊ·Ï»öÀÌ Á¸ÀçÇÏ´Â Çàµé
-      first_green_indices = np.argmax(green_mask > 0, axis=1)  # °¢ Çàº° Ã¹ ÃÊ·Ï»ö xÁÂÇ¥
+      found_green = np.any(green_mask > 0, axis=1)
+      first_green_indices = np.argmax(green_mask > 0, axis=1)
 
 
       for y in range(h):
           if found_green[y]:
-              # ÇØ´ç ÁÙ¿¡¼­ ÃÊ·Ï»öÀÌ ½ÃÀÛµÇ´Â xÁÂÇ¥ºÎÅÍ ³¡±îÁö °ËÁ¤»ö(0,0,0) Ã³¸®
-              x_start = first_green_indices[y]+3#3ÇÈ¼¿ ¿·¿¡¼­ ºÎÅÍ
+              x_start = first_green_indices[y]+3
               result_img[y, x_start:] = [0, 0, 0]
 
 
@@ -73,7 +66,6 @@ class LaneDetector:
 
 
   def get_bev(self, frame, gap_top, height_top, x_offset):
-      """»ç´Ù¸®²Ã ROI¸¦ Á÷»ç°¢Çü Æò¸éÀ¸·Î ÆîÄ§ (Bird's Eye View)"""
       pt_x_center = self.width / 2
       src_pts = np.float32([
           [0, self.height], [self.width, self.height],
@@ -90,21 +82,21 @@ class LaneDetector:
 
   def fill_bev_dead_zones(self, bev_img, y_start=400):
       """
-      BEV ÀÌ¹ÌÁöÀÇ ÇÏ´Ü ºó »ï°¢Çü ¿µ¿ªÀ» À­ÁÙ ÇÈ¼¿·Î ¼öÁ÷ È®ÀåÇÏ¿© Ã¤¿ò
-      y_start: È®ÀåÀ» ½ÃÀÛÇÒ ³ôÀÌ (º¸Åë »ï°¢ÇüÀÌ ½ÃÀÛµÇ´Â ÁöÁ¡)
+      BEV ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¿ï¿½ Ã¤ï¿½ï¿½
+      y_start: È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ´ï¿½ ï¿½ï¿½ï¿½ï¿½)
       """
       h, w = bev_img.shape[:2]
       filled_img = bev_img.copy()
 
 
-      # y_start ÁöÁ¡ºÎÅÍ ¸Ç ¾Æ·¡±îÁö ÇÑ ÁÙ¾¿ °Ë»ç
+      # y_start ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù¾ï¿½ ï¿½Ë»ï¿½
       for y in range(y_start, h):
-          # ÇöÀç ÁÙ(y)¿¡¼­ 0ÀÎ ºÎºÐ(°ËÀº»ö)À» Ã£¾Æ À­ ÁÙ(y-1)ÀÇ °ªÀ¸·Î µ¤¾î¾º¿ò
-          # binary ÀÌ¹ÌÁöÀÏ °æ¿ì¿Í ÄÃ·¯ ÀÌ¹ÌÁöÀÏ °æ¿ì ¸ðµÎ ´ëÀÀ °¡´ÉÇÏµµ·Ï Ã³¸®
-          if len(filled_img.shape) == 3:  # ÄÃ·¯ ÀÌ¹ÌÁö (3Ã¤³Î)
+          # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(y)ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½Îºï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½(y-1)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¾ºï¿½ï¿½
+          # binary ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+          if len(filled_img.shape) == 3:  # ï¿½Ã·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ (3Ã¤ï¿½ï¿½)
               mask = np.all(filled_img[y] == 0, axis=-1)
               filled_img[y][mask] = filled_img[y - 1][mask]
-          else:  # ÀÌÁø ÀÌ¹ÌÁö (1Ã¤³Î)
+          else:  # ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ (1Ã¤ï¿½ï¿½)
               mask = (filled_img[y] == 0)
               filled_img[y][mask] = filled_img[y - 1][mask]
 
@@ -114,57 +106,57 @@ class LaneDetector:
 
   def detect_line_type(self, valid_windows_list, min_ratio=0.6):
       """
-      °¢ À©µµ¿ìÀÇ À¯È¿¼º Á¤º¸¸¦ ¹ÙÅÁÀ¸·Î Â÷¼± Å¸ÀÔ ÆÇº°
-      valid_windows_list: [True, True, False, True, ...] ÇüÅÂÀÇ ¸®½ºÆ®
-      min_ratio: ½Ç¼±À¸·Î ÆÇ´ÜÇÒ ÃÖ¼Ò ºñÀ² (¿¹: 0.6 = 60% ÀÌ»ó)
+      ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½Çºï¿½
+      valid_windows_list: [True, True, False, True, ...] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+      min_ratio: ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½: 0.6 = 60% ï¿½Ì»ï¿½)
       """
       if not valid_windows_list:
           return "Lost"
 
 
-      # À¯È¿ÇÑ(True) À©µµ¿ìÀÇ °³¼ö¸¦ ¼Á´Ï´Ù.
+      # ï¿½ï¿½È¿ï¿½ï¿½(True) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½.
       num_valid = sum(valid_windows_list)
       total_windows = len(valid_windows_list)
 
 
-      # ºñÀ² °è»ê
+      # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
       fill_ratio = num_valid / total_windows if total_windows > 0 else 0
 
 
-      # ºñÀ²¿¡ µû¶ó Å¸ÀÔ °áÁ¤ (Æ©´× ÇÊ¿ä)
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Æ©ï¿½ï¿½ ï¿½Ê¿ï¿½)
       if fill_ratio > min_ratio:
-          return "Solid"  # ½Ç¼±
-      elif fill_ratio > 0.2: # ÃÖ¼ÒÇÑÀÇ ºñÀ²Àº ³Ñ¾î¾ß Á¡¼±À¸·Î ÀÎÁ¤
-          return "Dashed" # Á¡¼±
+          return "Solid"  # ï¿½Ç¼ï¿½
+      elif fill_ratio > 0.2: # ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+          return "Dashed" # ï¿½ï¿½ï¿½ï¿½
       else:
-          return "Lost"   # ³õÄ§
+          return "Lost"   # ï¿½ï¿½Ä§
 
 
   def extend_pixels_side_only(self, binary_img, y_start=380, center_gap=100):
       """
-      Áß¾Ó ºÎºÐÀ» Á¦¿ÜÇÏ°í ÁÂ/¿ìÃø ÇÏ´Ü ºó °ø°£¸¸ ¼öÁ÷ È®ÀåÇÔ.
-      center_gap: Áß¾Ó¿¡¼­ ¹«½ÃÇÒ ¿µ¿ªÀÇ ÀüÃ¼ °¡·Î Æø (ÇÈ¼¿ ´ÜÀ§)
+      ï¿½ß¾ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½.
+      center_gap: ï¿½ß¾Ó¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½)
       """
       h, w = binary_img.shape[:2]
       filled_img = binary_img.copy()
 
 
-      # Áß¾Ó Á¦¿Ü¸¦ À§ÇÑ °æ°è¼± °è»ê
+      # ï¿½ß¾ï¿½ ï¿½ï¿½ï¿½Ü¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½è¼± ï¿½ï¿½ï¿½
       left_boundary = (w // 2) - (center_gap // 2)
       right_boundary = (w // 2) + (center_gap // 2)
 
 
       for y in range(y_start, h):
-          # 1. ÇöÀç ÁÙ¿¡¼­ °ªÀÌ 0(°ËÁ¤)ÀÎ ¸¶½ºÅ© »ý¼º
+          # 1. ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0(ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½
           zero_mask = (filled_img[y] == 0)
 
 
-          # 2. Áß¾Ó ¿µ¿ª(left_boundary ~ right_boundary)Àº ¸¶½ºÅ©¿¡¼­ Á¦¿Ü (False Ã³¸®)
-          # Áï, Áß¾Ó ºÎºÐÀº 0ÀÌ¾îµµ À­ÁÙÀ» º¹»çÇØ¿ÀÁö ¾ÊÀ½
+          # 2. ï¿½ß¾ï¿½ ï¿½ï¿½ï¿½ï¿½(left_boundary ~ right_boundary)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (False Ã³ï¿½ï¿½)
+          # ï¿½ï¿½, ï¿½ß¾ï¿½ ï¿½Îºï¿½ï¿½ï¿½ 0ï¿½Ì¾îµµ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
           zero_mask[left_boundary:right_boundary] = False
 
 
-          # 3. ¸¶½ºÅ·µÈ ¿µ¿ª(ÁÂ/¿ì »çÀÌµå)¸¸ À­ÁÙ °ª º¹»ç
+          # 3. ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½/ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
           filled_img[y][zero_mask] = filled_img[y-1][zero_mask]
 
 
@@ -172,31 +164,31 @@ class LaneDetector:
 
 
   def get_binary_hls(self, img, gap_top=GAP_TOP, height_top=HEIGHT_TOP, x_offset=X_OFFSET, threshold=160):
-      """HLS ÇÊÅÍ¸µ°ú Canny Edge¸¦ °áÇÕÇÏ¿© Â÷¼± ÃßÃâ"""
+      """HLS ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ Canny Edgeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"""
 
 
-      # 1. ¿øº» ÀÌ¹ÌÁö BEV º¯È¯ (Canny¿ë)
+      # 1. ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ BEV ï¿½ï¿½È¯ (Cannyï¿½ï¿½)
       orbev_img, _ = self.get_bev(img, gap_top, height_top, x_offset)
 
 
-      # 2. HLS ÇÊÅÍ¸µ (¿øº» ÀÌ¹ÌÁö ±âÁØ)
+      # 2. HLS ï¿½ï¿½ï¿½Í¸ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
       hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
       white_lane_binary = np.zeros_like(hls[:, :, 1])
-      # ¹à±â(L)´Â ³ô°í Ã¤µµ(S)´Â ³·Àº ¿µ¿ª ÃßÃâ (Èò»ö Â÷¼±)
+      # ï¿½ï¿½ï¿½(L)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½(S)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
       white_lane_binary[(hls[:, :, 1] > 150)] = 255
 
 
-      # 3. »ö»ó ÇÊÅÍ¸µµÈ ÀÌ¹ÌÁö BEV º¯È¯
+      # 3. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ BEV ï¿½ï¿½È¯
       bev_binary, _ = self.get_bev(white_lane_binary, gap_top, height_top, x_offset)
 
 
-      # 4. Canny Edge ÃßÃâ (ÀÌ¹Ì º¯È¯µÈ BEV ÄÃ·¯ ÀÌ¹ÌÁö ±â¹Ý)
+      # 4. Canny Edge ï¿½ï¿½ï¿½ï¿½ (ï¿½Ì¹ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ BEV ï¿½Ã·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
       gray_bev = cv2.cvtColor(orbev_img, cv2.COLOR_BGR2GRAY)
       blurred = cv2.GaussianBlur(gray_bev, (5, 5), 0)
       canny_edge = cv2.Canny(blurred, 50, 150)
 
 
-      # 5. »ö»ó Á¤º¸(bev_binary) + ÇüÅÂ Á¤º¸(canny_edge) °áÇÕ
+      # 5. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(bev_binary) + ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(canny_edge) ï¿½ï¿½ï¿½ï¿½
       combined = cv2.bitwise_or(bev_binary, canny_edge)
 
 
@@ -204,7 +196,7 @@ class LaneDetector:
 
 
   def block_filter(self, binary_img, nwindows=40, min_w=5, max_w=9):
-      """Á÷»ç°¢Çü ºí·Ï ´ÜÀ§·Î ÂÉ°³¾î Â÷¼± µÎ²²(³Êºñ)°¡ ºñÁ¤»óÀûÀÎ °´Ã¼ Á¦°Å"""
+      """ï¿½ï¿½ï¿½ç°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î²ï¿½(ï¿½Êºï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½"""
       h_img, w_img = binary_img.shape
       window_height = h_img // nwindows
       filtered_img = np.zeros_like(binary_img)
@@ -232,17 +224,17 @@ class LaneDetector:
           area = stats[i, cv2.CC_STAT_AREA]
 
 
-          # 1. °¡·Î¼± Á¦°Å: ¼¼·Î°¡ °¡·Îº¸´Ù ±æ¾î¾ß ÇÔ (ºñÀ² 0.7 ÀÌ»ó)
+          # 1. ï¿½ï¿½ï¿½Î¼ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½Î°ï¿½ ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ 0.7 ï¿½Ì»ï¿½)
           aspect_ratio = h / w
-          if aspect_ratio < 0.2: continue  # ¹Î±èµµ Á¶Àý °î¼±??
+          if aspect_ratio < 0.2: continue  # ï¿½Î±èµµ ï¿½ï¿½ï¿½ï¿½ ï¿½î¼±??
 
 
-          # 2. ¸éÀû ±âÁØ ¿ÏÈ­: Á¡¼±ÀÌ³ª ¸Ö¸® ÀÖ´Â Â÷¼±Àº 300º¸´Ù ÀÛÀ» ¼ö ÀÖÀ½
+          # 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­: ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½Ö¸ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 300ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
           if area < 50:
               continue
 
 
-          # 3. ÃÖ´ë µÎ²² Á¦ÇÑ ÇØÁ¦ ¶Ç´Â È®´ë: Ä¿ºê¿¡¼­ ¹¶Ä£ Â÷¼± ´ëÀÀ
+          # 3. ï¿½Ö´ï¿½ ï¿½Î²ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ È®ï¿½ï¿½: Ä¿ï¿½ê¿¡ï¿½ï¿½ ï¿½ï¿½Ä£ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
           if w < 5:
               continue
 
@@ -252,34 +244,34 @@ class LaneDetector:
 
 
   def apply_dual_roi_mask(self, binary_img, left_pts, right_pts):
-      """ÀÌÁø ÀÌ¹ÌÁö¿¡ ÁÂ¿ì °³º° ROI¸¦ Àû¿ëÇÏ¿© °ü½É ¿µ¿ª¸¸ ³²±è"""
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ROIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"""
       mask = np.zeros_like(binary_img)
-      # ÁÂÃø ROI ¿µ¿ª »ý¼º (Èò»ö 255)
+      # ï¿½ï¿½ï¿½ï¿½ ROI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ 255)
       cv2.fillPoly(mask, [np.int32(left_pts)], 255)
-      # ¿ìÃø ROI ¿µ¿ª »ý¼º (Èò»ö 255)
+      # ï¿½ï¿½ï¿½ï¿½ ROI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ 255)
       cv2.fillPoly(mask, [np.int32(right_pts)], 255)
 
 
-      # ¿øº» ÀÌÁø ÀÌ¹ÌÁö¿Í ¸¶½ºÅ© ÇÕ¼º
+      # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å© ï¿½Õ¼ï¿½
       return cv2.bitwise_and(binary_img, mask)
 
 
   def draw_dual_roi(self, img, left_pts, right_pts):
-      """¿øº» ¿µ»ó¿¡ ÁÂ¿ì ROI Å×µÎ¸®¸¦ ½Ã°¢È­"""
-      draw_img = img.copy() # ¿øº» º¸Á¸À» À§ÇØ º¹»çº» »ç¿ë
-      # ¿ÞÂÊÀº »¡°£»ö(Red), ¿À¸¥ÂÊÀº ÆÄ¶õ»ö(Blue) Å×µÎ¸® ±×¸®±â
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ ROI ï¿½×µÎ¸ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½È­"""
+      draw_img = img.copy() # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½çº» ï¿½ï¿½ï¿½
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Red), ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½(Blue) ï¿½×µÎ¸ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
       cv2.polylines(draw_img, [np.int32(left_pts)], True, (0, 0, 255), 3)
       cv2.polylines(draw_img, [np.int32(right_pts)], True, (255, 0, 0), 3)
       return draw_img
 
 
   def sliding_window(self, binary_img, left_pts, right_pts, nwindows=12, margin=60, minpix=50):
-      """ÀÌÀü À©µµ¿ì À§Ä¡¸¦ ±âÁØÀ¸·Î ¹Ù·Î À­ ¿µ¿ªÀ» Å½»öÇÏ´Â ¼öÁ÷ ÃßÀû ¹æ½Ä"""
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½"""
       out_img = np.dstack((binary_img, binary_img, binary_img))
       window_height = int(self.height // nwindows)
 
 
-      # [1] ½ÃÀÛÁ¡ Ã£±â: ¼³Á¤ÇÑ ROI ¹Ù´Ú ¹üÀ§ ³»¿¡¼­ Å½»ö
+      # [1] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ROI ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½
       l_min, l_max = int(np.min(left_pts[:, 0])), int(np.max(left_pts[:, 0]))
       r_min, r_max = int(np.min(right_pts[:, 0])), int(np.max(right_pts[:, 0]))
 
@@ -291,12 +283,12 @@ class LaneDetector:
       histogram = np.sum(binary_img[int(self.height * 0.5):, :], axis=0)
 
 
-      # [ÇÙ½É 2] Á¡¼± À¯½Ç ½Ã ´ëÀÀ ·ÎÁ÷
-      # ÇØ´ç ROI ¹üÀ§ ³»¿¡ ÇÈ¼¿ÀÌ ÇÏ³ªµµ ¾øÀ¸¸é argmax°¡ 0À» ¹ÝÈ¯ÇÏ¿© Æ¢´Â Çö»ó ¹æÁö
+      # [ï¿½Ù½ï¿½ 2] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+      # ï¿½Ø´ï¿½ ROI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ argmaxï¿½ï¿½ 0ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ Æ¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
       if np.sum(histogram[l_min:l_max]) > 0:
           leftx_current = np.argmax(histogram[l_min:l_max]) + l_min
       else:
-          # ROI ³»¿¡ ÇÈ¼¿ÀÌ ¾øÀ¸¸é ROIÀÇ ÇÏ´Ü Áß¾Ó ÁöÁ¡À» ÀÓ½Ã ½ÃÀÛÁ¡À¸·Î °íÁ¤
+          # ROI ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ROIï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ß¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
           leftx_current = (l_min + l_max) // 2
 
 
@@ -311,12 +303,12 @@ class LaneDetector:
       left_lane_inds, right_lane_inds = [], []
 
 
-      # [Ãß°¡] °¢ À©µµ¿ìÀÇ À¯È¿¼º ¿©ºÎ¸¦ ÀúÀåÇÒ ¸®½ºÆ®
+      # [ï¿½ß°ï¿½] ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
       valid_left_list = []
       valid_right_list = []
 
 
-      # À©µµ¿ì°¡ ÇÑ Ä­ À§·Î °¥ ¶§ ÀÌµ¿ÇÒ ¼ö ÀÖ´Â ÃÖ´ë ÇÈ¼¿ ¼ö (Æ®·¢ °î·ü¿¡ µû¶ó 10~20 »çÀÌ Á¶Àý)
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ì°¡ ï¿½ï¿½ Ä­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ö´ï¿½ ï¿½È¼ï¿½ ï¿½ï¿½ (Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10~20 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
       max_shift = 10
 
 
@@ -329,7 +321,7 @@ class LaneDetector:
           win_xright_low, win_xright_high = rightx_current - margin, rightx_current + margin
 
 
-          # ½Ã°¢È­ (³ì»ö ¹Ú½º)
+          # ï¿½Ã°ï¿½È­ (ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½)
           cv2.rectangle(out_img, (win_xleft_low, win_y_low), (win_xleft_high, win_y_high), (0, 255, 0), 1)
           cv2.rectangle(out_img, (win_xright_low, win_y_low), (win_xright_high, win_y_high), (0, 255, 0), 1)
 
@@ -344,8 +336,8 @@ class LaneDetector:
           right_lane_inds.append(good_right)
 
 
-          # [ÇÙ½É 3] ¼öÁ÷ ÃßÀû °ü¼º (Vertical Memory)
-          # ÇÈ¼¿ÀÌ ¾øÀ¸¸é ÀÌÀü À©µµ¿ìÀÇ X ÁÂÇ¥¸¦ ±×´ë·Î À¯ÁöÇÏ¸ç À§·Î ¿Ã¶ó°¨ (¼öÁ÷ °è½Â)
+          # [ï¿½Ù½ï¿½ 3] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Vertical Memory)
+          # ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ X ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¶ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
           left_valid = len(good_left) > minpix
           right_valid = len(good_right) > minpix
 
@@ -354,11 +346,11 @@ class LaneDetector:
           valid_right_list.append(right_valid)
           if left_valid:
               measured_left_x = int(np.mean(nonzerox[good_left]))
-              # ±Þ°ÝÇÑ ÀÌµ¿ Á¦ÇÑ: $$leftx\_current = leftx\_current + \text{clip}(measured - current, -max, max)$$
+              # ï¿½Þ°ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½: $$leftx\_current = leftx\_current + \text{clip}(measured - current, -max, max)$$
               shift = measured_left_x - leftx_current
               leftx_current += np.clip(shift, -max_shift, max_shift)
           elif right_valid:
-              # ¿ÞÂÊÀÌ ¾È º¸ÀÌ¸é ¿À¸¥ÂÊÀ» ±âÁØÀ¸·Î '°­Á¦ °íÁ¤' (¸Å¿ì Áß¿ä!)
+              # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 'ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½' (ï¿½Å¿ï¿½ ï¿½ß¿ï¿½!)
               leftx_current = rightx_current - self.lane_width
 
 
@@ -367,17 +359,17 @@ class LaneDetector:
               shift = measured_right_x - rightx_current
               rightx_current += np.clip(shift, -max_shift, max_shift)
           elif left_valid:
-              # ¿À¸¥ÂÊÀÌ ¾È º¸ÀÌ¸é ¿ÞÂÊÀ» ±âÁØÀ¸·Î '°­Á¦ °íÁ¤'
+              # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 'ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½'
               rightx_current = leftx_current + self.lane_width
 
 
-      # µ¥ÀÌÅÍ º´ÇÕ ¹× ÇÇÆÃ (¿À·ù ¹æÁö¸¦ À§ÇØ ÇÈ¼¿ ¼ö Ã¼Å© Ãß°¡)
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ ï¿½ï¿½ Ã¼Å© ï¿½ß°ï¿½)
       left_lane_inds = np.concatenate(left_lane_inds)
       right_lane_inds = np.concatenate(right_lane_inds)
 
 
       left_fit, right_fit = None, None
-      # polyfit ¿¡·¯('be poorly conditioned') ¹æÁö¸¦ À§ÇØ ÃæºÐÇÑ Á¡ÀÌ ÀÖÀ» ¶§¸¸ ½ÇÇà
+      # polyfit ï¿½ï¿½ï¿½ï¿½('be poorly conditioned') ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
       if len(left_lane_inds) > 100:
           left_fit = np.polyfit(nonzeroy[left_lane_inds], nonzerox[left_lane_inds], 2)
       if len(right_lane_inds) > 100:
@@ -388,74 +380,74 @@ class LaneDetector:
 
 
   def sanity_check(self, left_fit, right_fit, min_dist=300, max_dist=520):
-      """Â÷¼± °£°Ý ¹× ³í¸®Àû Å¸´ç¼º °Ë»ç"""
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ç¼º ï¿½Ë»ï¿½"""
       if left_fit is None or right_fit is None: return False
       y_eval = self.height - 1
       l_x = left_fit[0] * y_eval ** 2 + left_fit[1] * y_eval + left_fit[2]
       r_x = right_fit[0] * y_eval ** 2 + right_fit[1] * y_eval + right_fit[2]
       lane_width = r_x - l_x
-      # °£°ÝÀÌ ³Ê¹« Á¼°Å³ª ²¿¿´À» °æ¿ì(l_x > r_x) ¿¡·¯
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(l_x > r_x) ï¿½ï¿½ï¿½ï¿½
       return min_dist < lane_width < max_dist
 
 
-  # lib.py ÆÄÀÏÀÇ LaneDetector Å¬·¡½º ¾È¿¡ Ãß°¡ÇÏ¼¼¿ä.
+  # lib.py ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ LaneDetector Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ß°ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
   def draw_lane_area(self, binary_img, left_fit, right_fit):
-      """ÇÇÆÃµÈ °î¼±À» ±â¹ÝÀ¸·Î Â÷¼± ¹× ÁÖÇà ¿µ¿ªÀ» Ã¤¿ö¼­ ½Ã°¢È­"""
-      # 1. ±×¸± µµÈ­Áö »ý¼º (ÄÃ·¯)
-      out_img = np.dstack((binary_img, binary_img, binary_img)) * 0  # °ËÀº»ö ¹è°æ
+      """ï¿½ï¿½ï¿½Ãµï¿½ ï¿½î¼±ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½È­"""
+      # 1. ï¿½×¸ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ã·ï¿½)
+      out_img = np.dstack((binary_img, binary_img, binary_img)) * 0  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 
-      # 2. ÇÇÆÃÀÌ Á¤»óÀûÀ¸·Î µÇ¾úÀ» ¶§¸¸ ±×¸®±â
+      # 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
       if left_fit is None or right_fit is None:
           return out_img
 
 
-      # 3. Y ÁÂÇ¥ ¹× ÇÇÆÃµÈ X ÁÂÇ¥ °è»ê
+      # 3. Y ï¿½ï¿½Ç¥ ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ X ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½
       ploty = np.linspace(0, self.height - 1, self.height)
       left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
       right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
 
 
-      # 4. ´Ù°¢Çü ÁÂÇ¥ »ý¼º
-      # ¿ÞÂÊ °î¼±À» µû¶ó ³»·Á°¡´Â Á¡µé
+      # 4. ï¿½Ù°ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
+      # ï¿½ï¿½ï¿½ï¿½ ï¿½î¼±ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
       pts_left = np.array([np.transpose(np.vstack([left_fitx, ploty]))])
-      # ¿À¸¥ÂÊ °î¼±À» µû¶ó ¿Ã¶ó°¡´Â Á¡µé (¼ø¼­¸¦ µÚÁý¾î¾ß ÇÏ³ªÀÇ Æó°î¼±ÀÌ µÊ)
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¼±ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¶ó°¡´ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½î¼±ï¿½ï¿½ ï¿½ï¿½)
       pts_right = np.array([np.flipud(np.transpose(np.vstack([right_fitx, ploty])))])
-      # µÎ Á¡µéÀÇ ÁýÇÕÀ» ÇÕÃÄ¼­ ÇÏ³ªÀÇ ´Ù°¢Çü ÁÂÇ¥ ¿Ï¼º
+      # ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¼ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Ù°ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½Ï¼ï¿½
       pts = np.hstack((pts_left, pts_right))
 
 
-      # 5. ´Ù°¢Çü Ã¤¿ì±â (°¡¿îµ¥ ÁÖÇà ¿µ¿ª - ÃÊ·Ï»ö)
+      # 5. ï¿½Ù°ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½îµ¥ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ - ï¿½Ê·Ï»ï¿½)
       cv2.fillPoly(out_img, np.int_([pts]), (0, 255, 0))
 
 
-      # (¼±ÅÃ) ¿ÞÂÊ/¿À¸¥ÂÊ Â÷¼± ¿µ¿ª ÀÚÃ¼¸¦ Á¼°Ô Ã¤¿ì°í ½Í´Ù¸é?
-      # margin = 20 # Â÷¼± ÆøÀÇ Àý¹Ý
+      # (ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ ï¿½Í´Ù¸ï¿½?
+      # margin = 20 # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
       #
-      # ¿ÞÂÊ Â÷¼± ¿µ¿ª
+      # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
       # pts_left_l = np.array([np.transpose(np.vstack([left_fitx - margin, ploty]))])
       # pts_left_r = np.array([np.flipud(np.transpose(np.vstack([left_fitx + margin, ploty])))])
       # pts_left_poly = np.hstack((pts_left_l, pts_left_r))
-      # cv2.fillPoly(out_img, np.int_([pts_left_poly]), (255, 0, 0)) # ÆÄ¶õ»ö
+      # cv2.fillPoly(out_img, np.int_([pts_left_poly]), (255, 0, 0)) # ï¿½Ä¶ï¿½ï¿½ï¿½
       #
-      # ¿À¸¥ÂÊ Â÷¼± ¿µ¿ªµµ µ¿ÀÏÇÑ ¹æ½ÄÀ¸·Î Ãß°¡ °¡´É
+      # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 
       return out_img
 
 
   def predict_lane(self, left_fit, right_fit, lane_width=320):
-      """ÇÑÂÊ Â÷¼±¸¸ º¸ÀÏ ¶§ ¹Ý´ëÆí Â÷¼±À» °¡»óÀ¸·Î »ý¼º"""
-      # 1. ¿ÞÂÊ¸¸ ÀÖ°í ¿À¸¥ÂÊÀÌ ¾ø´Â °æ¿ì
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"""
+      # 1. ï¿½ï¿½ï¿½Ê¸ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
       if left_fit is not None and right_fit is None:
           right_fit = np.copy(left_fit)
-          right_fit[2] += lane_width # »ó¼öÇ×(C)¿¡ ÆøÀ» ´õÇÔ
+          right_fit[2] += lane_width # ï¿½ï¿½ï¿½ï¿½ï¿½(C)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 
-      # 2. ¿À¸¥ÂÊ¸¸ ÀÖ°í ¿ÞÂÊÀÌ ¾ø´Â °æ¿ì
+      # 2. ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
       elif right_fit is not None and left_fit is None:
           left_fit = np.copy(right_fit)
-          left_fit[2] -= lane_width # »ó¼öÇ×(C)¿¡¼­ ÆøÀ» »­
+          left_fit[2] -= lane_width # ï¿½ï¿½ï¿½ï¿½ï¿½(C)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 
       return left_fit, right_fit
@@ -464,7 +456,7 @@ class LaneDetector:
 
 
   def search_around_poly(self, binary_img, left_fit, right_fit, margin=50):
-      """ÀÌÀü ÇÁ·¹ÀÓÀÇ °î¼± ÁÖº¯¿¡¼­¸¸ ÇÈ¼¿À» Ã£´Â °í¼Ó ¸ðµå"""
+      """ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¼± ï¿½Öºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½"""
       nonzero = binary_img.nonzero()
       nonzeroy, nonzerox = np.array(nonzero[0]), np.array(nonzero[1])
 
@@ -476,10 +468,10 @@ class LaneDetector:
                   (nonzerox < (right_fit[0] * (nonzeroy ** 2) + right_fit[1] * nonzeroy + right_fit[2] + margin)))
 
 
-      # »õ·Î¿î ÇÇÆÃ ½Ãµµ
+      # ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
       new_left_fit, new_right_fit = None, None
       try:
-          if np.sum(left_lane_inds) > 500:  # ÃÖ¼Ò ÇÈ¼¿ ±âÁØ
+          if np.sum(left_lane_inds) > 500:  # ï¿½Ö¼ï¿½ ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½
               new_left_fit = np.polyfit(nonzeroy[left_lane_inds], nonzerox[left_lane_inds], 2)
           if np.sum(right_lane_inds) > 500:
               new_right_fit = np.polyfit(nonzeroy[right_lane_inds], nonzerox[right_lane_inds], 2)
@@ -496,7 +488,7 @@ class LaneDetector:
 
 class PurePursuitController:
   def calculate_steering(self, left_fit, right_fit, width, height, look_ahead=150):
-      """¿ÀÇÁ¼Â ±â¹Ý Pure Pursuit Á¶Çâ°¢ °è»ê"""
+      """ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Pure Pursuit ï¿½ï¿½ï¿½â°¢ ï¿½ï¿½ï¿½"""
       y_eval = height - 1
       if left_fit is not None and right_fit is not None:
           l_x = left_fit[0] * y_eval ** 2 + left_fit[1] * y_eval + left_fit[2]

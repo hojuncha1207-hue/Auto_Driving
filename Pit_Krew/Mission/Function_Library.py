@@ -1,3 +1,5 @@
+
+
 """
 -------------------------------------------------------------------
  FILE NAME: Function_Library.py
@@ -96,8 +98,8 @@ class libARDUINO(object):
 class libLIDAR(object):
     def __init__(self, port):
         """
-        ¶óÀÌ´Ù ¼¾¼­ °´Ã¼ »ý¼º ¹× ¿¬°á
-        :param port: ¶óÀÌ´Ù°¡ ¿¬°áµÈ ½Ã¸®¾ó Æ÷Æ® (¿¹: 'COM3' ¶Ç´Â '/dev/ttyUSB0')
+        ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param port: ï¿½ï¿½ï¿½Ì´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½ï¿½Æ® (ï¿½ï¿½: 'COM3' ï¿½Ç´ï¿½ '/dev/ttyUSB0')
         """
         self.rpm = 0
         self.lidar = RPLidar(port)
@@ -105,7 +107,7 @@ class libLIDAR(object):
 
     def init(self):
         """
-        ¶óÀÌ´Ù ÀåÄ¡ Á¤º¸¸¦ ÀÐ¾î¿Í Ãâ·Â (¿¬°á È®ÀÎ¿ë)
+        ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ È®ï¿½Î¿ï¿½)
         :return: None
         """
         info = self.lidar.get_info()
@@ -113,40 +115,40 @@ class libLIDAR(object):
 
     def getState(self):
         """
-        ¶óÀÌ´Ù ¼¾¼­ÀÇ ÇöÀç »óÅÂ(Health) Á¡°Ë
-        :return: None (»óÅÂ Á¤º¸¸¦ ÄÜ¼Ö¿¡ Ãâ·Â)
+        ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Health) ï¿½ï¿½ï¿½ï¿½
+        :return: None (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ü¼Ö¿ï¿½ ï¿½ï¿½ï¿½)
         """
         health = self.lidar.get_health()
         print(health)
 
     def scanning(self):
         """
-        [ÇÙ½É] ¶óÀÌ´Ù ¼¾¼­·ÎºÎÅÍ µ¥ÀÌÅÍ¸¦ °è¼ÓÇØ¼­ ¹Þ¾Æ¿À´Â Á¦³Ê·¹ÀÌÅÍ ÇÔ¼ö
-        - 360µµ ÇÑ ¹ÙÄû ½ºÄµÀÌ ¿Ï·áµÉ ¶§¸¶´Ù µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯(yield)ÇÕ´Ï´Ù.
+        [ï¿½Ù½ï¿½] ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
+        - 360ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äµï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½È¯(yield)ï¿½Õ´Ï´ï¿½.
 
-        :yield: [°¢µµ(Angle), °Å¸®(Distance)] ÇüÅÂÀÇ Numpy 2Â÷¿ø ¹è¿­
-                (Quality °ªÀº Á¦¿ÜÇÏ°í °¢µµ¿Í °Å¸®¸¸ ¹ÝÈ¯ÇÔ)
+        :yield: [ï¿½ï¿½ï¿½ï¿½(Angle), ï¿½Å¸ï¿½(Distance)] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Numpy 2ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
+                (Quality ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½)
         """
         scan_list = []
         iterator = self.lidar.iter_measures(SCAN_TYPE, MAX_BUFFER_SIZE)
 
         for new_scan, quality, angle, distance in iterator:
             if new_scan:
-                # µ¥ÀÌÅÍ°¡ ÀÏÁ¤ °³¼ö(SAMPLE_RATE) ÀÌ»ó ¸ð¿´À» ¶§¸¸ ¹ÝÈ¯
+                # ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(SAMPLE_RATE) ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
                 if len(scan_list) > SAMPLE_RATE:
                     np_data = np.array(list(scan_list))
-                    # scan_list´Â (quality, angle, distance) ¼ø¼­ÀÓ
-                    # ¿©±â¼­ [:, 1:] ½½¶óÀÌ½ÌÀ» ÅëÇØ quality¸¦ ¹ö¸®°í [angle, distance]¸¸ ³²±è
+                    # scan_listï¿½ï¿½ (quality, angle, distance) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                    # ï¿½ï¿½ï¿½â¼­ [:, 1:] ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ qualityï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [angle, distance]ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                     yield np_data[:, 1:]
                 scan_list = []
 
-            # ³ëÀÌÁî ÇÊÅÍ¸µ: ³Ê¹« °¡±î¿î °Å¸®(MIN_DISTANCE)´Â ¹«½Ã
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½: ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½(MIN_DISTANCE)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if distance > MIN_DISTANCE:
                 scan_list.append((quality, angle, distance))
 
     def stop(self):
         """
-        ¶óÀÌ´Ù ÀÛµ¿ ÁßÁö ¹× ¿¬°á ÇØÁ¦ (ÇÁ·Î±×·¥ Á¾·á ½Ã ÇÊ¼ö)
+        ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ûµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê¼ï¿½)
         """
         self.lidar.stop()
         self.lidar.stop_motor()
@@ -154,55 +156,55 @@ class libLIDAR(object):
 
     def setRPM(self, rpm):
         """
-        ¶óÀÌ´Ù ¸ðÅÍ È¸Àü ¼Óµµ ¼³Á¤
-        :param rpm: ¼³Á¤ÇÒ RPM °ª
+        ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param rpm: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RPM ï¿½ï¿½
         """
         self.lidar.motor_speed = rpm
 
     def getRPM(self):
         """
-        ÇöÀç ¸ðÅÍ È¸Àü ¼Óµµ Á¶È¸
-        :return: ÇöÀç RPM °ª
+        ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½È¸
+        :return: ï¿½ï¿½ï¿½ï¿½ RPM ï¿½ï¿½
         """
         return self.lidar.motor_speed
 
     def getAngleRange(self, scan, minAngle, maxAngle):
         """
-        Æ¯Á¤ °¢µµ ¹üÀ§ ³»ÀÇ µ¥ÀÌÅÍ¸¸ ÃßÃâ
-        :param scan: scanning()¿¡¼­ ¹ÞÀº [angle, distance] µ¥ÀÌÅÍ
-        :param minAngle: ÃÖ¼Ò °¢µµ (0~360)
-        :param maxAngle: ÃÖ´ë °¢µµ (0~360)
-        :return: ¹üÀ§ ³» µ¥ÀÌÅÍ¸¸ ³²Àº Numpy ¹è¿­
+        Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param scan: scanning()ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ [angle, distance] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        :param minAngle: ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ (0~360)
+        :param maxAngle: ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ (0~360)
+        :return: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Numpy ï¿½è¿­
         """
         data = np.array(scan)
-        # data[:, 0]Àº Angle(°¢µµ) ¿­ÀÔ´Ï´Ù.
+        # data[:, 0]ï¿½ï¿½ Angle(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
         condition = np.where((data[:, 0] < maxAngle) & (data[:, 0] > minAngle))
         return data[condition]
 
     def getDistanceRange(self, scan, minDist, maxDist):
         """
-        Æ¯Á¤ °Å¸® ¹üÀ§ ³»ÀÇ µ¥ÀÌÅÍ¸¸ ÃßÃâ
-        :param scan: scanning()¿¡¼­ ¹ÞÀº [angle, distance] µ¥ÀÌÅÍ
-        :param minDist: ÃÖ¼Ò °Å¸® (mm ´ÜÀ§)
-        :param maxDist: ÃÖ´ë °Å¸® (mm ´ÜÀ§)
-        :return: ¹üÀ§ ³» µ¥ÀÌÅÍ¸¸ ³²Àº Numpy ¹è¿­
+        Æ¯ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param scan: scanning()ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ [angle, distance] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        :param minDist: ï¿½Ö¼ï¿½ ï¿½Å¸ï¿½ (mm ï¿½ï¿½ï¿½ï¿½)
+        :param maxDist: ï¿½Ö´ï¿½ ï¿½Å¸ï¿½ (mm ï¿½ï¿½ï¿½ï¿½)
+        :return: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Numpy ï¿½è¿­
         """
         data = np.array(scan)
-        # data[:, 1]Àº Distance(°Å¸®) ¿­ÀÔ´Ï´Ù.
+        # data[:, 1]ï¿½ï¿½ Distance(ï¿½Å¸ï¿½) ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
         condition = np.where((data[:, 1] < maxDist) & (data[:, 1] > minDist))
         return data[condition]
 
     def getAngleDistanceRange(self, scan, minAngle, maxAngle, minDist, maxDist):
         """
-        [ÇÊÅÍ¸µ ³¡ÆÇ¿Õ] Æ¯Á¤ °¢µµ AND Æ¯Á¤ °Å¸® ¹üÀ§ ³»ÀÇ µ¥ÀÌÅÍ¸¸ ÃßÃâ
-        ¿¹: "Àü¹æ 30µµ(°¢µµ) ¾È¿¡ ÀÖ´Â 1¹ÌÅÍ ÀÌ³»(°Å¸®) Àå¾Ö¹°¸¸ º¸¿©Áà"
+        [ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½Ç¿ï¿½] Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ AND Æ¯ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        ï¿½ï¿½: "ï¿½ï¿½ï¿½ï¿½ 30ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½È¿ï¿½ ï¿½Ö´ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½Ì³ï¿½(ï¿½Å¸ï¿½) ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 
-        :param scan: ¿øº» µ¥ÀÌÅÍ
-        :param minAngle: ÃÖ¼Ò °¢µµ
-        :param maxAngle: ÃÖ´ë °¢µµ
-        :param minDist: ÃÖ¼Ò °Å¸®
-        :param maxDist: ÃÖ´ë °Å¸®
-        :return: Á¶°ÇÀ» ¸ðµÎ ¸¸Á·ÇÏ´Â µ¥ÀÌÅÍ Numpy ¹è¿­
+        :param scan: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        :param minAngle: ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param maxAngle: ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param minDist: ï¿½Ö¼ï¿½ ï¿½Å¸ï¿½
+        :param maxDist: ï¿½Ö´ï¿½ ï¿½Å¸ï¿½
+        :return: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Numpy ï¿½è¿­
         """
         data = np.array(scan)
         condition = np.where(
@@ -223,15 +225,15 @@ class libLIDAR(object):
 class libCAMERA(object):
     def __init__(self):
         """
-        Ä«¸Þ¶ó ¶óÀÌºê·¯¸® ÃÊ±âÈ­
+        Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½Ìºê·¯ï¿½ï¿½ ï¿½Ê±ï¿½È­
         """
         self.capnum = 0
         self.row, self.col, self.dim = (0, 0, 0)
 
     def loop_break(self):
         """
-        'q' Å°¸¦ ´©¸£¸é ·çÇÁ¸¦ Á¾·áÇÏ´Â ½ÅÈ£¸¦ º¸³¿
-        :return: True(Á¾·á) / False(°è¼Ó)
+        'q' Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: True(ï¿½ï¿½ï¿½ï¿½) / False(ï¿½ï¿½ï¿½)
         """
         if cv2.waitKey(10) & 0xFF == ord('q'):
             print("Camera Reading is ended.")
@@ -241,43 +243,43 @@ class libCAMERA(object):
 
     def file_read(self, img_path):
         """
-        ÀÌ¹ÌÁö ÆÄÀÏÀ» ÀÐ¾î¿È
-        :param img_path: ÆÄÀÏ °æ·Î (¿¹: "./image.jpg")
-        :return: ÀÌ¹ÌÁö ¹è¿­ (numpy array)
+        ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½
+        :param img_path: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½: "./image.jpg")
+        :return: ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½è¿­ (numpy array)
         """
         return np.array(cv2.imread(img_path))
 
     def rgb_conversion(self, img):
         """
-        BGR ÀÌ¹ÌÁö¸¦ RGB·Î º¯È¯
-        :param img: ¿øº» BGR ÀÌ¹ÌÁö
-        :return: º¯È¯µÈ RGB ÀÌ¹ÌÁö
+        BGR ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ RGBï¿½ï¿½ ï¿½ï¿½È¯
+        :param img: ï¿½ï¿½ï¿½ï¿½ BGR ï¿½Ì¹ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½È¯ï¿½ï¿½ RGB ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         return cv2.cvtColor(img.copy(), cv2.COLOR_BGR2RGB)
 
     def hsv_conversion(self, img):
         """
-        BGR ÀÌ¹ÌÁö¸¦ HSV·Î º¯È¯
-        :param img: ¿øº» BGR ÀÌ¹ÌÁö
-        :return: º¯È¯µÈ HSV ÀÌ¹ÌÁö
+        BGR ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ HSVï¿½ï¿½ ï¿½ï¿½È¯
+        :param img: ï¿½ï¿½ï¿½ï¿½ BGR ï¿½Ì¹ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½È¯ï¿½ï¿½ HSV ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         return cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV)
 
     def gray_conversion(self, img):
         """
-        ÄÃ·¯ ÀÌ¹ÌÁö¸¦ Èæ¹é(Grayscale)À¸·Î º¯È¯
-        :param img: ¿øº» ÄÃ·¯ ÀÌ¹ÌÁö
-        :return: º¯È¯µÈ Èæ¹é ÀÌ¹ÌÁö
+        ï¿½Ã·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(Grayscale)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
 
         return cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
 
     def color_extract(self, img, idx):
         """
-        Æ¯Á¤ »ö»ó Ã¤³Î(R, G, B)¸¸ ³²±â°í ³ª¸ÓÁö´Â Á¦°Å
-        :param img: ¿øº» ÀÌ¹ÌÁö
-        :param idx: ³²±æ Ã¤³Î ÀÎµ¦½º (RED=0, GREEN=1, BLUE=2)
-        :return: Æ¯Á¤ Ã¤³Î¸¸ ³²Àº ÀÌ¹ÌÁö
+        Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½(R, G, B)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param idx: ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ (RED=0, GREEN=1, BLUE=2)
+        :return: Æ¯ï¿½ï¿½ Ã¤ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         result = img.copy()
 
@@ -289,10 +291,10 @@ class libCAMERA(object):
 
     def extract_rgb(self, img, print_enable=False):
         """
-        ÀÌ¹ÌÁö¸¦ R, G, B Ã¤³Îº°·Î ºÐ¸®ÇÏ¿© ¹ÝÈ¯
-        :param img: ¿øº» ÀÌ¹ÌÁö
-        :param print_enable: ºÐ¸®µÈ Ã¤³ÎÀ» ±×·¡ÇÁ·Î Ãâ·ÂÇÒÁö ¿©ºÎ
-        :return: (RedÃ¤³Î, GreenÃ¤³Î, BlueÃ¤³Î) Æ©ÇÃ
+        ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ R, G, B Ã¤ï¿½Îºï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½È¯
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param print_enable: ï¿½Ð¸ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: (RedÃ¤ï¿½ï¿½, GreenÃ¤ï¿½ï¿½, BlueÃ¤ï¿½ï¿½) Æ©ï¿½ï¿½
         """
         self.row, self.col, self.dim = img.shape
 
@@ -318,11 +320,11 @@ class libCAMERA(object):
 
     def initial_setting(self, cam0port=0, cam1port=1, capnum=1):
         """
-        Ä«¸Þ¶ó ÀåÄ¡ ¿¬°á ¹× ÃÊ±âÈ­
-        :param cam0port: 1¹ø Ä«¸Þ¶ó Æ÷Æ® ¹øÈ£ (±âº» 0)
-        :param cam1port: 2¹ø Ä«¸Þ¶ó Æ÷Æ® ¹øÈ£ (±âº» 1)
-        :param capnum: »ç¿ëÇÒ Ä«¸Þ¶ó °³¼ö (1 or 2)
-        :return: (cam0°´Ã¼, cam1°´Ã¼)
+        Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê±ï¿½È­
+        :param cam0port: 1ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½È£ (ï¿½âº» 0)
+        :param cam1port: 2ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½È£ (ï¿½âº» 1)
+        :param capnum: ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ (1 or 2)
+        :return: (cam0ï¿½ï¿½Ã¼, cam1ï¿½ï¿½Ã¼)
         """
         # OpenCV Initial Setting
         print("OpenCV Version:", cv2.__version__)
@@ -347,10 +349,10 @@ class libCAMERA(object):
 
     def camera_read(self, cap1, cap2=None):
         """
-        ¿¬°áµÈ Ä«¸Þ¶ó·ÎºÎÅÍ ÇÁ·¹ÀÓÀ» ÀÐ¾î¿È
-        :param cap1: 1¹ø Ä«¸Þ¶ó °´Ã¼
-        :param cap2: 2¹ø Ä«¸Þ¶ó °´Ã¼ (¼±ÅÃ)
-        :return: [¼º°ø¿©ºÎ1, ÇÁ·¹ÀÓ1, ¼º°ø¿©ºÎ2, ÇÁ·¹ÀÓ2...] ¸®½ºÆ®
+        ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½
+        :param cap1: 1ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ã¼
+        :param cap2: 2ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ã¼ (ï¿½ï¿½ï¿½ï¿½)
+        :return: [ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2...] ï¿½ï¿½ï¿½ï¿½Æ®
         """
         result, capset = [], [cap1, cap2]
 
@@ -362,9 +364,9 @@ class libCAMERA(object):
 
     def image_show(self, frame0, frame1=None):
         """
-        ÀÌ¹ÌÁö¸¦ È­¸é¿¡ ¶ç¿ò
-        :param frame0: Ã¹ ¹øÂ° ÀÌ¹ÌÁö
-        :param frame1: µÎ ¹øÂ° ÀÌ¹ÌÁö (¼±ÅÃ)
+        ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ï¿½
+        :param frame0: Ã¹ ï¿½ï¿½Â° ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param frame1: ï¿½ï¿½ ï¿½ï¿½Â° ï¿½Ì¹ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½)
         """
         if frame1 is None:
             cv2.imshow('frame0', frame0)
@@ -374,11 +376,11 @@ class libCAMERA(object):
 
     def color_filtering(self, img, roi=None, print_enable=False):
         """
-        HSV »ö»ó °ø°£À» ÀÌ¿ëÇØ Æ¯Á¤ »ö»ó¸¸ ÇÊÅÍ¸µ
-        :param img: ¿øº» ÀÌ¹ÌÁö
-        :param roi: ÇÊÅÍ¸µÇÒ ¸ñÇ¥ »ö»ó (RED, YELLOW, GREEN µî)
-        :param print_enable: °á°ú ÀÌ¹ÌÁö¸¦ Ãâ·ÂÇÒÁö ¿©ºÎ
-        :return: ÇÊÅÍ¸µµÈ ÀÌ¹ÌÁö
+        HSV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param roi: ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ (RED, YELLOW, GREEN ï¿½ï¿½)
+        :param print_enable: ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         self.row, self.col, self.dim = img.shape
 
@@ -402,42 +404,42 @@ class libCAMERA(object):
 
     def gaussian_blurring(self, img, kernel_size=(None, None)):
         """
-        °¡¿ì½Ã¾È ºí·¯ Ã³¸® (³ëÀÌÁî Á¦°Å)
-        :param img: ¿øº» ÀÌ¹ÌÁö
-        :param kernel_size: Ä¿³Î Å©±â (¿¹: (5, 5))
-        :return: ºí·¯ Ã³¸®µÈ ÀÌ¹ÌÁö
+        ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param kernel_size: Ä¿ï¿½ï¿½ Å©ï¿½ï¿½ (ï¿½ï¿½: (5, 5))
+        :return: ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         return cv2.GaussianBlur(img.copy(), kernel_size, 0)
 
     def canny_edge(self, img, lth, hth):
         """
-        Canny ¾Ë°í¸®ÁòÀ¸·Î ¿¡Áö(¿Ü°û¼±) °ËÃâ
-        :param img: ¿øº» ÀÌ¹ÌÁö
-        :param lth: ÇÏÀ§ ÀÓ°è°ª (Low Threshold)
-        :param hth: »óÀ§ ÀÓ°è°ª (High Threshold)
-        :return: ¿¡Áö ÀÌ¹ÌÁö
+        Canny ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ü°ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½
+        :param img: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param lth: ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ª (Low Threshold)
+        :param hth: ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ª (High Threshold)
+        :return: ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         return cv2.Canny(img.copy(), lth, hth)
 
     def histogram_equalization(self, gray):
         """
-        È÷½ºÅä±×·¥ ÆòÈ°È­ (¸í¾Ïºñ °³¼±)
-        :param gray: Èæ¹é ÀÌ¹ÌÁö
-        :return: ÆòÈ°È­µÈ ÀÌ¹ÌÁö
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×·ï¿½ ï¿½ï¿½È°È­ (ï¿½ï¿½Ïºï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param gray: ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½È°È­ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         return cv2.equalizeHist(gray)
 
     def hough_transform(self, img, rho=None, theta=None, threshold=None, mll=None, mlg=None, mode="lineP"):
         """
-        ÇãÇÁ º¯È¯À» ÀÌ¿ëÇÑ µµÇü(Á÷¼±, ¿ø) °ËÃâ
-        :param img: ÀÔ·Â ÀÌ¹ÌÁö (ÁÖ·Î ¿¡Áö ÀÌ¹ÌÁö)
-        :param rho: °Å¸® ÇØ»óµµ (ÇÈ¼¿ ´ÜÀ§)
-        :param theta: °¢µµ ÇØ»óµµ (¶óµð¾È ´ÜÀ§)
-        :param threshold: ÀÓ°è°ª (Á÷¼±/¿ø ÀÎÁ¤ ±âÁØ ÅõÇ¥¼ö)
-        :param mll: ÃÖ¼Ò ¼± ±æÀÌ (minLineLength)
-        :param mlg: ÃÖ´ë ¼± °£°Ý (maxLineGap)
-        :param mode: "line"(ÀÏ¹ÝÇãÇÁ), "lineP"(È®·üÀûÇãÇÁ), "circle"(¿ø)
-        :return: °ËÃâµÈ µµÇü Á¤º¸ (Á÷¼± ÁÂÇ¥µé ¶Ç´Â ¿ø Á¤º¸µé)
+        ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½
+        :param img: ï¿½Ô·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ (ï¿½Ö·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½)
+        :param rho: ï¿½Å¸ï¿½ ï¿½Ø»ï¿½ (ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param theta: ï¿½ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param threshold: ï¿½Ó°è°ª (ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½)
+        :param mll: ï¿½Ö¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (minLineLength)
+        :param mlg: ï¿½Ö´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (maxLineGap)
+        :param mode: "line"(ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½), "lineP"(È®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½), "circle"(ï¿½ï¿½)
+        :return: ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         """
         if mode == "line":
             return cv2.HoughLines(img.copy(), rho, theta, threshold)
@@ -450,11 +452,11 @@ class libCAMERA(object):
 
     def morphology(self, img, kernel_size=(None, None), mode="opening"):
         """
-        ÇüÅÂÇÐÀû º¯È¯ (Morphology) ¼öÇà
-        :param img: ÀÔ·Â ÀÌ¹ÌÁö
-        :param kernel_size: Ä¿³Î Å©±â
-        :param mode: "opening"(ÀâÀ½Á¦°Å), "closing"(±¸¸Û¸Þ¿ì±â), "gradient"(¿Ü°û¼±)
-        :return: º¯È¯µÈ ÀÌ¹ÌÁö
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ (Morphology) ï¿½ï¿½ï¿½ï¿½
+        :param img: ï¿½Ô·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param kernel_size: Ä¿ï¿½ï¿½ Å©ï¿½ï¿½
+        :param mode: "opening"(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½), "closing"(ï¿½ï¿½ï¿½Û¸Þ¿ï¿½ï¿½), "gradient"(ï¿½Ü°ï¿½ï¿½ï¿½)
+        :return: ï¿½ï¿½È¯ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         """
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
 
@@ -469,12 +471,12 @@ class libCAMERA(object):
 
     def point_analyze(self, gray, line, point_gap, len_threshold):
         """
-        °ËÃâµÈ ¼± ÁÖº¯ÀÇ ÇÈ¼¿°ª Â÷ÀÌ¸¦ ºÐ¼®ÇÏ¿© À¯È¿¼º °ËÁõ
-        :param gray: Èæ¹é ÀÌ¹ÌÁö
-        :param line: °Ë»çÇÒ Á÷¼± ÁÂÇ¥ [x1, y1, x2, y2]
-        :param point_gap: ¼± ÁÖº¯ ÇÈ¼¿À» º¼ °£°Ý
-        :param len_threshold: ÀÎÁ¤ÇÒ ÃÖ¼Ò ¸í¾Ï Â÷ÀÌ
-        :return: True(À¯È¿ÇÔ) / False(¹«È¿ÇÔ)
+        ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öºï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ð¼ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param gray: ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param line: ï¿½Ë»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ [x1, y1, x2, y2]
+        :param point_gap: ï¿½ï¿½ ï¿½Öºï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param len_threshold: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: True(ï¿½ï¿½È¿ï¿½ï¿½) / False(ï¿½ï¿½È¿ï¿½ï¿½)
         """
         disparity = [0, 0]
 
@@ -496,12 +498,12 @@ class libCAMERA(object):
 
     def object_detection(self, img, sample=0, mode="circle", print_enable=False):
         """
-        ½ÅÈ£µî »ö»ó ¹× ¿øÇü °ËÃâ
-        :param img: ÀÔ·Â ÀÌ¹ÌÁö
-        :param sample: ¿ø ³»ºÎ »ö»ó °ËÁõÀ» À§ÇÑ »ùÇÃ¸µ ¹üÀ§
-        :param mode: µµÇü °ËÃâ ¸ðµå ("circle")
-        :param print_enable: °á°ú Ãâ·Â ¿©ºÎ
-        :return: °¨ÁöµÈ ½ÅÈ£µî »ö»ó ¹®ÀÚ¿­ (¿¹: "RED") ¶Ç´Â None
+        ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param img: ï¿½Ô·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param sample: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param mode: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ("circle")
+        :param print_enable: ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ (ï¿½ï¿½: "RED") ï¿½Ç´ï¿½ None
         """
         result = None
         replica = img.copy()
@@ -541,14 +543,14 @@ class libCAMERA(object):
 
     def edge_detection(self, img, width=0, height=0, gap=0, threshold=0, print_enable=False):
         """
-        Â÷¼± ÀÎ½Ä ¹× ÁÖÇà ¹æÇâ ÆÇ´Ü (Canny Edge + Hough Line)
-        :param img: ÀÔ·Â ÀÌ¹ÌÁö
-        :param width: ±â¿ï±â ÇÊÅÍ¸µ ±âÁØ (°¡·ÎÆø Á¦ÇÑ)
-        :param height: ±æÀÌ ÇÊÅÍ¸µ ±âÁØ (¼¼·Î±æÀÌ Á¦ÇÑ)
-        :param gap: point_analyze¿¡ »ç¿ëµÉ ÇÈ¼¿ °£°Ý
-        :param threshold: point_analyze¿¡ »ç¿ëµÉ ÀÓ°è°ª
-        :param print_enable: °á°ú Ãâ·Â ¿©ºÎ
-        :return: ÁÖÇà ¹æÇâ (FORWARD=0, LEFT=1, RIGHT=2) ¶Ç´Â None
+        ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ (Canny Edge + Hough Line)
+        :param img: ï¿½Ô·ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        :param width: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param height: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        :param gap: point_analyzeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :param threshold: point_analyzeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó°è°ª
+        :param print_enable: ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        :return: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (FORWARD=0, LEFT=1, RIGHT=2) ï¿½Ç´ï¿½ None
         """
         prediction = None
         replica = img.copy()
